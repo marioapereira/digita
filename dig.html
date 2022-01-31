@@ -1,0 +1,245 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>DIG</title>
+<style>
+body {
+	background-color:#33C
+}
+h1 {color:inherit;
+font-size:30px;
+font-family:Tahoma, Geneva, sans-serif;
+margin:0;}
+
+h2{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:24px;
+	color:#00a;
+	line-height:30px;
+	width:120px;
+	margin:0;
+	text-align:center;
+	background-color:#FFF;
+	border-radius:15px;
+	margin-bottom:5px;
+	}
+h3 {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	color:#FFF;
+	background-color:#00A;
+	border-top-left-radius:15px;
+	border-top-right-radius:15px;
+	margin:0;
+	line-height:20px;
+	text-align:center;
+}
+h4 {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:20px;
+	color:white;
+	margin:0;
+	align:right;
+}
+	
+#ponto {
+	position:absolute;
+	right:10px;
+	top:10px;
+	width:120px;
+	height:30px;	
+}
+
+#k1 {
+	position:absolute;
+	left:10px;
+	top:10px;
+	color:darkgray;
+	transition:transform 3s;
+}
+#fim {
+	position:absolute;
+	width:400px;
+	height:200px;
+	z-index:1;
+	left: 50%;
+	top: 50%;
+	background-color: #FFFFFF;
+	margin-top: -100px;
+	margin-left: -200px;
+	border-radius:15px;
+	border:solid  2px black;
+	text-align:center;
+	visibility:visible;
+}
+h5 {
+	width: 100px;
+	background-color: #00A;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 18px;
+	color: #FFF;
+	line-height: 30px;
+	text-align: center;
+	border-radius:15px;
+	margin-left:150px;
+	user-select:none;
+	cursor:default;
+}
+h5:hover {
+	background-color:#39F;
+}
+</style>
+</head>
+
+<body onkeydown="verifica(event)">
+<div id="tela">
+<div id="k1"><h1>A</h1></div>
+</div>
+<div id="ponto">
+<h2 id="valpnt">0</h2>
+<!--<h2 id="valniv"><span style="font-size:14px">Nivel:</span><br />1</h2>-->
+<h3>Nível:</h3><h2 id="valniv" style="border-top-left-radius:0;border-top-right-radius:0">1</h2>
+<div ><h4 id="vidas">@@@@@</h4></div>
+</div>
+<div id="fim">
+  <h1 style="margin-top:20px" id="frasw">Próxima Partida</h1>
+  <h5 onclick="starx()" id="com">iniciar</h5>
+  <h5>config</h5>
+</div>
+</body>
+
+<script>
+var point=0;
+var niv=1;
+var velo=500;
+var desl=15;
+var act=65;
+var cnt=1;
+var pca=1;
+var letra=[0,65];
+var play=0;
+var vida=5;
+var dv=0;
+function verifica(event){
+	if (play==0) {return}
+	q=event.keyCode;
+	if (q==27) {clearInterval(dwn);clearInterval(adv);fimjogo()}
+	else if(q==letra[pca]) {
+		point+=10;
+		document.getElementById('valpnt').innerHTML=point;
+		document.getElementById('k'+pca).style.display="none";
+		pca++;
+		document.getElementById('k'+pca).style.color="white";
+}
+	else if(q==66) {document.getElementById('k1').cloneNode()}
+	else {document.getElementById('valpnt').innerHTML=point;diminuivida()}
+	/*else {alert(q+" - "+letra[pca])};	*/
+}
+
+function starx() {
+	if (dv==1) {location.reload();}
+	play=1;
+	document.getElementById('fim').style.visibility="hidden";
+	
+}
+
+function diminuivida(){
+	if (vida==-1) {return}
+	vida--;
+	t="";
+	for (k=0;k<vida;k++){
+		t+="@";
+	}
+	document.getElementById('vidas').innerHTML=t;	
+}
+
+function aumentavida() {
+		document.getElementById('vidas').innerHTML+="@";
+		vida++;
+		
+}
+
+function adicionar(){
+		if (play==0) {return}
+s=document.getElementById('tela').innerHTML;
+cnt++;
+p1='<div id="k';
+p2='"><h1>';
+lt=Math.floor(Math.random()*25)+65;
+letra[cnt]=lt;
+lt=String.fromCharCode(lt);
+
+p3='</h1></div>';
+document.getElementById('tela').innerHTML=s+p1+cnt+p2+lt+p3;
+document.getElementById('k'+cnt).style.position="absolute";
+document.getElementById('k'+cnt).style.top="0";	
+lf=Math.floor(Math.random()*1200)+10;
+document.getElementById('k'+cnt).style.left=lf+"px";
+document.getElementById('k'+cnt).style.color="black";
+document.getElementById('k'+cnt).style.transition="transform 3s";
+
+}
+
+function fimjogo() {
+	clearInterval(dwn);
+	clearInterval(adv);
+
+	play=0;
+	document.getElementById('frasw').innerHTML="Total: "+point+ " pts.";
+	document.getElementById('com').innerHTML="ok";
+	document.getElementById('fim').style.visibility="visible";
+	dv=1;
+		
+}
+
+function atualizavel() {
+	document.getElementById('valniv').innerHTML=niv;
+	clearInterval(dwn);
+	dwn=setInterval(descer,velo);
+	clearInterval(adv);
+	adv=setInterval(adicionar,velo*3);
+	}
+
+function descer() {
+	if (play==0) {return}
+if (point<0) {fimjogo()}
+if (vida<0) {fimjogo()}
+
+if (point>100 && niv==1) {niv=2;velo=450;atualizavel();aumentavida()}
+if (point>200 && niv==2) {niv=3;velo=400;atualizavel();aumentavida()}
+if (point>300 && niv==3) {niv=4;velo=350;atualizavel();aumentavida()}
+if (point>400 && niv==4) {niv=5;velo=300;atualizavel();aumentavida()}
+if (point>500 && niv==5) {niv=6;velo=250;atualizavel();aumentavida()}
+if (point>600 && niv==6) {niv=7;velo=200;atualizavel();aumentavida()}
+if (point>700 && niv==7) {niv=8;velo=150;atualizavel();aumentavida()}
+if (point>800 && niv==8) {niv=9;velo=100;atualizavel();aumentavida()}
+
+for (var d=1;d<=cnt;d++) {
+	if (d==pca) {
+		document.getElementById('k'+pca).style.color="white";
+		}
+	
+ t=document.getElementById('k'+d).offsetTop;
+ if (t<580) {
+	 t+=desl;
+	 document.getElementById('k'+d).style.top=t+"px";} 
+ else {
+	/* 	 c1=Math.floor(Math.random()*360);
+	 document.getElementById('k'+d).style.transform="rotate("+c1+"deg)"; */
+	if (document.getElementById('k'+d).style.color!="red") {pca++;		diminuivida();}
+	 document.getElementById('k'+d).style.color="red"; 
+	 	 document.getElementById('k'+d).style.transform="rotate(90deg)";
+
+
+		
+ }
+}
+}
+
+var dwn=setInterval(descer,velo);
+var adv=setInterval(adicionar,velo*3);
+
+</script>
+</html>
